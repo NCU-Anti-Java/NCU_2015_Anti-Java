@@ -1,25 +1,19 @@
 package io.github.antijava.marjio.input;
 
 import io.github.antijava.marjio.common.Event;
-import io.github.antijava.marjio.common.IApplication;
 import io.github.antijava.marjio.common.IInput;
 import io.github.antijava.marjio.common.Key;
 import io.github.antijava.marjio.common.Status;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 
 /**
  * Created by firejox on 2015/12/25.
  */
-public class Input implements IInput {
-    private static final Map<Key, Key> keys_map;
+public final class Input implements IInput {
+    static final Map<Key, Key> keys_map;
 
     static {
         keys_map = new EnumMap(Key.class);
@@ -30,9 +24,6 @@ public class Input implements IInput {
         keys_map.put(Key.CROUCH, Key.DOWN);
     }
 
-
-    IApplication app;
-
     Set<Key> pro_keys;
     Set<Key> cur_keys;
     Set<Key> pre_keys;
@@ -40,8 +31,7 @@ public class Input implements IInput {
     Vector<Status> statuses_cached;
 
 
-    Input(IApplication app) {
-        this.app = app;
+    Input() {
 
         pro_keys = Collections.synchronizedSet(EnumSet.noneOf(Key.class));
         cur_keys = Collections.synchronizedSet(EnumSet.noneOf(Key.class));
@@ -64,8 +54,9 @@ public class Input implements IInput {
         statuses.clear();
     }
 
+
     @Override
-    public boolean isPressing(Key key) {
+    public boolean isPressing(@NotNull Key key) {
         key = keys_map.getOrDefault(key, key);
 
         return  key != Key.UNDEFINED &&
@@ -74,7 +65,7 @@ public class Input implements IInput {
     }
 
     @Override
-    public boolean isPressed(Key key) {
+    public boolean isPressed(@NotNull Key key) {
         key = keys_map.getOrDefault(key, key);
 
         return key != Key.UNDEFINED &&
@@ -83,7 +74,7 @@ public class Input implements IInput {
     }
 
     @Override
-    public boolean isReleased(Key key) {
+    public boolean isReleased(@NotNull Key key) {
         key = keys_map.getOrDefault(key, key);
 
         return  key != Key.UNDEFINED &&
@@ -92,7 +83,7 @@ public class Input implements IInput {
     }
 
     @Override
-    public boolean isTrigger(Key key) {
+    public boolean isTrigger(@NotNull Key key) {
 
         return isPressed(key) || isPressed(key);
     }
@@ -107,12 +98,12 @@ public class Input implements IInput {
     public void triggerEvent(Event evt) {
         switch (evt.getType()) {
             case Keyboard: {
-                KeyInfo info = (KeyInfo)evt.getData();
+                IKeyInfo info = (IKeyInfo)evt.getData();
 
-                if (info.st == KeyInfo.State.DOWN)
-                    pro_keys.add(KeyConverter.convert(info.obj));
-                else
-                    pro_keys.remove(KeyConverter.convert(info.obj));
+                if (info.getKeyState() == KeyState.KEY_PRESSED)
+                    pro_keys.add(info.getKey());
+                else if (info.getKeyState() == KeyState.KEY_RELEASED)
+                    pro_keys.remove(info.getKey());
 
                 break;
             }
