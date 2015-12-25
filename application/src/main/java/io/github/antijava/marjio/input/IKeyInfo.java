@@ -12,6 +12,6 @@ public interface IKeyInfo {
         return Key.UNDEFINED;
     }
     default KeyState getKeyState() {
-        return KeyState.KEY_UNKOWN;
+        return KeyState.KEY_UNKNOWN;
     }
 }

@@ -6,5 +6,5 @@ package io.github.antijava.marjio.input;
 public enum KeyState {
     KEY_PRESSED,
     KEY_RELEASED,
-    KEY_UNKOWN,
+    KEY_UNKNOWN,
 }

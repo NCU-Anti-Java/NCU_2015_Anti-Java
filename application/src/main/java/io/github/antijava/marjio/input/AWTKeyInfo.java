@@ -1,7 +1,6 @@
 package io.github.antijava.marjio.input;
 
 import io.github.antijava.marjio.common.Key;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -10,9 +9,14 @@ import java.util.Map;
 /**
  * Created by firejox on 2015/12/25.
  */
+
+
 public class AWTKeyInfo implements IKeyInfo {
     static final Map<Integer, Key> code_map;
 
+    /**
+     * Convert AWT KeyEvent keycode to Key
+     * */
     static {
         code_map = new HashMap<>();
 
@@ -627,11 +631,26 @@ public class AWTKeyInfo implements IKeyInfo {
     }
 
     Key key = Key.UNDEFINED;
-    KeyState state = KeyState.KEY_UNKOWN;
+    KeyState state = KeyState.KEY_UNKNOWN;
 
-    AWTKeyInfo(KeyEvent evt, @NotNull KeyState state) {
+    AWTKeyInfo(KeyEvent evt) {
         key = code_map.getOrDefault(evt.getKeyCode(), Key.UNDEFINED);
-        this.state = state;
+
+        switch (evt.getID()) {
+            case KeyEvent.KEY_PRESSED: {
+                state = KeyState.KEY_PRESSED;
+                break;
+            }
+
+            case KeyEvent.KEY_RELEASED: {
+                state = KeyState.KEY_RELEASED;
+                break;
+            }
+
+            default: {
+                state = KeyState.KEY_UNKNOWN;
+            }
+        }
     }
 
     @Override

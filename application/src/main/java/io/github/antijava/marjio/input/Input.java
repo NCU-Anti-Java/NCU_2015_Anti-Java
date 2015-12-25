@@ -13,15 +13,15 @@ import java.util.*;
  * Created by firejox on 2015/12/25.
  */
 public final class Input implements IInput {
-    static final Map<Key, Key> keys_map;
+    static final Map<Key, Key> keymap;
 
     static {
-        keys_map = new EnumMap(Key.class);
+        keymap = new EnumMap(Key.class);
 
-        keys_map.put(Key.JUMP, Key.UP);
-        keys_map.put(Key.MOVE_RIGHT, Key.RIGHT);
-        keys_map.put(Key.MOVE_LEFT, Key.LEFT);
-        keys_map.put(Key.CROUCH, Key.DOWN);
+        keymap.put(Key.JUMP, Key.UP);
+        keymap.put(Key.MOVE_RIGHT, Key.RIGHT);
+        keymap.put(Key.MOVE_LEFT, Key.LEFT);
+        keymap.put(Key.CROUCH, Key.DOWN);
     }
 
     Set<Key> pro_keys;
@@ -57,25 +57,25 @@ public final class Input implements IInput {
 
     @Override
     public boolean isPressing(@NotNull Key key) {
-        key = keys_map.getOrDefault(key, key);
+        key = keymap.getOrDefault(key, key);
 
         return  key != Key.UNDEFINED &&
-                !pre_keys.contains(key) &&
-                cur_keys.contains(key);
-    }
-
-    @Override
-    public boolean isPressed(@NotNull Key key) {
-        key = keys_map.getOrDefault(key, key);
-
-        return key != Key.UNDEFINED &&
                 (pre_keys.contains(key) &&
                 cur_keys.contains(key));
     }
 
     @Override
+    public boolean isPressed(@NotNull Key key) {
+        key = keymap.getOrDefault(key, key);
+
+        return key != Key.UNDEFINED &&
+                (!pre_keys.contains(key) &&
+                cur_keys.contains(key));
+    }
+
+    @Override
     public boolean isReleased(@NotNull Key key) {
-        key = keys_map.getOrDefault(key, key);
+        key = keymap.getOrDefault(key, key);
 
         return  key != Key.UNDEFINED &&
                 (pre_keys.contains(key) &&
@@ -85,7 +85,7 @@ public final class Input implements IInput {
     @Override
     public boolean isTrigger(@NotNull Key key) {
 
-        return isPressed(key) || isPressed(key);
+        return isPressed(key) || isReleased(key);
     }
 
     @Override
@@ -108,9 +108,9 @@ public final class Input implements IInput {
                 break;
             }
 
+            // TODO: Data to Status
             case NetWorkClient:
             case NetworkServer: {
-                statuses.add((Status) evt.getData());
                 break;
             }
 
