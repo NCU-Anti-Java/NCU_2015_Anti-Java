@@ -8,10 +8,6 @@ import io.github.antijava.marjio.common.Key;
 
 
 public interface IKeyInfo {
-    default Key getKey() {
-        return Key.UNDEFINED;
-    }
-    default KeyState getKeyState() {
-        return KeyState.KEY_UNKNOWN;
-    }
+    Key getKey();
+    KeyState getKeyState();
 }
