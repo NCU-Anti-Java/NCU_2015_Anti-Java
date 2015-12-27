@@ -9,6 +9,10 @@ import java.nio.file.NoSuchFileException;
  * Created by fntsr on 2015/12/23.
  */
 public interface IGraphics {
+    /**
+     * Get default font of the Graphics.
+     * @return Default font.
+     */
     IFont getDefaultFont();
 
     /**

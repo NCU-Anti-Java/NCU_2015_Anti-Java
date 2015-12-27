@@ -14,7 +14,7 @@ public interface IBitmap extends Disposable {
     void clear();
 
     /**
-     * Clears the specified rectangle
+     * Clears the specified rectangle area of the bitmap.
      *
      * @param x The x coordinate for the upper-left corner.
      * @param y The y coordinate for the upper-left corner.
@@ -22,15 +22,16 @@ public interface IBitmap extends Disposable {
      * @param height The height of the rectangle to clear.
      */
     void clearRect(int x, int y, int width, int height);
+
     /**
-     * Clears the specified rectangle
+     * Clears the specified rectangle of the bitmap.
      *
      * @param rect The rectangle.
      */
     void clearRect(Rectangle rect);
 
     /**
-     * Draws the outline text to the bitmap.
+     * Draws the outline text on the bitmap.
      *
      * @param text The text that will be drawn.
      * @param color The color of the text.
@@ -41,18 +42,21 @@ public interface IBitmap extends Disposable {
      * @param align The alignment of the text.
      */
     void drawText(CharSequence text, int x, int y, int maxWidth, int lineHeight, Color color, TextAlign align);
+
     /**
      * {@code color} defaults to {@link Color::BLACK}.
      *
      * @see #drawText(CharSequence, int, int, int, int, Color, TextAlign)
      */
     void drawText(CharSequence text, int x, int y, int maxWidth, int lineHeight, TextAlign align);
+
     /**
      * {@code align} defaults to {@link TextAlign#LEFT}.
      *
      * @see #drawText(CharSequence, int, int, int, int, Color, TextAlign)
      */
     void drawText(CharSequence text, int x, int y, int maxWidth, int lineHeight, Color color);
+
     /**
      * {@code color} defaults to {@link Color::BLACK}.
      * {@code align} defaults to {@link TextAlign#LEFT}.
@@ -72,14 +76,14 @@ public interface IBitmap extends Disposable {
     Rectangle measureText(CharSequence text, int lineHeight);
 
     /**
-     * Fills the entire bitmap.
+     * Fills the entire bitmap with specified color.
      *
      * @param color The color of the rectangle.
      */
     void fillAll(Color color);
 
     /**
-     * Fills the specified rectangle.
+     * Fills the specified rectangle with specified color.
      *
      * @param x The x coordinate for the upper-left corner.
      * @param y The y coordinate for the upper-left corner
@@ -90,7 +94,7 @@ public interface IBitmap extends Disposable {
     void fillRect(int x, int y, int width, int height, Color color);
 
     /**
-     * Fills the specified rectangle.
+     * Fills the specified rectangle with specified color.
      *
      * @param rect The rectangle to fill.
      * @param color The color of the rectangle.
@@ -139,6 +143,7 @@ public interface IBitmap extends Disposable {
      * @param opacity Opacity can be set from 0 to 255.
      */
     void stretch_blt(int x, int y, int width, int height, IBitmap src, Rectangle srcRect, int opacity);
+
     /**
      * Performs a block transfer from the {@param src} box {@param srcRect} to destination rect.
      *
@@ -179,7 +184,7 @@ public interface IBitmap extends Disposable {
     int getWidth();
 
     /**
-     * Returns the font set to  {@link #drawText} and {@link #measureText}.
+     * Returns the font set to {@link #drawText} and {@link #measureText}.
      * Defaults to {@link IGraphics#getDefaultFont()}.
      */
     IFont getFont();
