@@ -1,5 +1,1 @@
-repositories {
-}
-
-dependencies {
-}
+apply plugin: 'java'
