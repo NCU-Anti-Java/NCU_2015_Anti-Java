@@ -38,10 +38,29 @@ public class StatusData {
     public int action_id;
     @JsonField(fieldName = "timer_counter")
     public int time_counter;
+
     @JsonField(fieldName = "st_x")
     public int st_x;
+
     @JsonField(fieldName = "st_y")
     public int st_y;
+
+    @JsonField(fieldName = "x")
+    public int x;
+    @JsonField(fieldName = "y")
+    public int y;
+
+    @JsonField(fieldName = "vx")
+    public double vx;
+
+    @JsonField(fieldName = "vy")
+    public double vy;
+
+    @JsonField(fieldName = "ax")
+    public double ax;
+
+    @JsonField(fieldName = "ay")
+    public double ay;
 
     @JsonField(fieldName = "query")
     public boolean query;
