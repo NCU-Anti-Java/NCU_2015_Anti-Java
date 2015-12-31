@@ -24,6 +24,19 @@ public class RoomScene extends SceneBase {
         super(application);
         mIsServer = isServer;
         mCurrentChoice = 0;
+
+        initWindows();
+    }
+
+    private void initWindows() {
+        final IApplication application = getApplication();
+
+        mWindowCommand = new WindowCommand(application, 180, MENU_TEXT);
+        mWindowCommand.setActive(true);
+        mWindowPlayerList = new WindowPlayerList(application, 600, 570);
+
+        mWindowCommand.setX(600);
+        mWindowCommand.setY(490);
     }
 
     @Override
@@ -69,6 +82,7 @@ public class RoomScene extends SceneBase {
                 mCurrentChoice = MENU_TEXT.length - 1;
         }
         else if(input.isPressed(Key.ENTER) || input.isPressing(Key.ENTER)) {
+            mCurrentChoice = mWindowCommand.getIndex();
             select();
         }
     }
@@ -81,6 +95,7 @@ public class RoomScene extends SceneBase {
         switch(mCurrentChoice) {
             case EXIT_ROOM: {
                 final ISceneManager sceneManager = getApplication().getSceneManager();
+
                 if (mIsServer) {
                     final IServer server = getApplication().getServer();
                     // TODO: Server should broadcast to clients that the room is canceled.
@@ -109,6 +124,9 @@ public class RoomScene extends SceneBase {
             }
             case START_GAME: {
                 // TODO: Only server can start game, then server broadcast to clients to start game.
+                if(mIsServer) {
+
+                }
                 break;
             }
         }
