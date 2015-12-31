@@ -32,7 +32,9 @@ public class Request implements Packable {
 
     public enum Types {
         ClientWannaJoinRoom,
-        ClientCanJoinRoom;
+        ClientCanJoinRoom,
+        ClientWannaExitRoom,
+        ClientExitedRoom;
     }
 
 

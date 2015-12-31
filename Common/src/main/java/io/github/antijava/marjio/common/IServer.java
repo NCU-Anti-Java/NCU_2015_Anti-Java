@@ -1,6 +1,7 @@
 package io.github.antijava.marjio.common;
 
 import io.github.antijava.marjio.common.input.Status;
+import io.github.antijava.marjio.common.network.ClientInfo;
 import io.github.antijava.marjio.common.network.Packable;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public interface IServer {
      *
      * @return IP 清單，暫定是 String List
      */
-    List getClients();
+    List<ClientInfo> getClients();
 
     /**
      * Specifics if is listening.
