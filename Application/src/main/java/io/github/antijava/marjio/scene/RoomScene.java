@@ -14,8 +14,11 @@ import io.github.antijava.marjio.window.WindowCommand;
 import io.github.antijava.marjio.window.WindowIPAddressInput;
 import io.github.antijava.marjio.window.WindowPlayerList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by Zheng-Yuan on 12/27/2015.
@@ -29,11 +32,13 @@ public class RoomScene extends SceneBase implements Constant {
 
     private WindowCommand mWindowCommand;
     private WindowPlayerList mWindowPlayerList;
+    private List<String> mPlayerList;
 
     public RoomScene(IApplication application, boolean isServer) {
         super(application);
         mIsServer = isServer;
         mCurrentChoice = 0;
+        mPlayerList = new ArrayList<>();
 
         initWindows();
     }
@@ -56,6 +61,14 @@ public class RoomScene extends SceneBase implements Constant {
         mWindowPlayerList.update();
         checkKeyState();
         checkStatus();
+
+        if(mIsServer) {
+            try {
+                checkClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void checkClient() throws Exception {
@@ -64,22 +77,30 @@ public class RoomScene extends SceneBase implements Constant {
 
         List<Request> requests = input.getRequest();
         List<ClientInfo> clients = server.getClients();
+        Logger logger = getApplication().getLogger();
 
         for (Request request : requests) {
             if (request.getType() == Request.Types.ClientWannaJoinRoom) {
                 clients.stream().filter(client -> client.getClientID() == request.getClientID()).forEach(client -> {
                     client.setIsJoined(true);
                 });
+                server.send(new Request(Request.Types.ClientCanJoinRoom), request.getClientID());
             } else if (request.getType() == Request.Types.ClientWannaExitRoom) {
                 clients.stream().filter(client -> client.getClientID() == request.getClientID()).forEach(client -> {
                     client.setIsJoined(false);
                 });
+                server.send(new Request(Request.Types.ClientExitedRoom), request.getClientID());
             }
         }
 
         RoomData roomData = new RoomData(server.getClients());
         Status status = new Status(roomData, Status.Types.ServerMessage);
         server.broadcast(status);
+
+        mPlayerList = new ArrayList<>();
+        for(ClientInfo clientInfo : clients) {
+            mPlayerList.add(clientInfo.getClientID().toString());
+        }
     }
 
     private void checkKeyState() {
