@@ -2,9 +2,13 @@ package io.github.antijava.marjio.scene;
 
 import io.github.antijava.marjio.common.*;
 import io.github.antijava.marjio.common.input.Key;
+import io.github.antijava.marjio.common.input.Request;
+import io.github.antijava.marjio.common.input.RoomData;
 import io.github.antijava.marjio.common.input.Status;
+import io.github.antijava.marjio.common.network.ClientInfo;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Zheng-Yuan on 12/27/2015.
@@ -27,6 +31,30 @@ public class RoomScene extends SceneBase {
         super.update();
         checkKeyState();
         checkStatus();
+    }
+
+    private void checkClient() throws Exception {
+        final IInput input = getApplication().getInput();
+        final IServer server = getApplication().getServer();
+
+        List<Request> requests = input.getRequest();
+        List<ClientInfo> clients = server.getClients();
+
+        for (Request request : requests) {
+            if (request.getType() == Request.Types.ClientWannaJoinRoom) {
+                clients.stream().filter(client -> client.getClientID() == request.getClientID()).forEach(client -> {
+                    client.setIsJoined(true);
+                });
+            } else if (request.getType() == Request.Types.ClientWannaExitRoom) {
+                clients.stream().filter(client -> client.getClientID() == request.getClientID()).forEach(client -> {
+                    client.setIsJoined(false);
+                });
+            }
+        }
+
+        RoomData roomData = new RoomData(server.getClients());
+        Status status = new Status(roomData, Status.Types.ServerMessage);
+        server.broadcast(status);
     }
 
     private void checkKeyState() {

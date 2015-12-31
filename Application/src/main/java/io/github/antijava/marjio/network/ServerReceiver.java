@@ -35,7 +35,7 @@ public class ServerReceiver extends Listener{
             if (!mConnectionMap.containsValue(connection)) {
                 uuid = UUID.randomUUID();
                 mConnectionMap.put(uuid, connection);
-                mClientList.add(new ClientInfo(uuid));
+                mClientList.add(new ClientInfo(uuid, mClientList.size()+1));
                 connection.setName(uuid.toString());
             } else {
                 uuid = UUID.fromString(connection.toString());
