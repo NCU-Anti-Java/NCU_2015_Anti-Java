@@ -1,9 +1,12 @@
 package io.github.antijava.marjio.scene.sceneObject;
 
+import io.github.antijava.marjio.common.graphics.IBitmap;
 import io.github.antijava.marjio.common.graphics.Rectangle;
 import io.github.antijava.marjio.common.graphics.Viewport;
 import io.github.antijava.marjio.graphics.Bitmap;
+import io.github.antijava.marjio.resourcemanager.ResourcesManager;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,11 +42,14 @@ public class Block extends SceneObjectObjectBase {
 
     private Type mType;
 
-    public Block(int type, int x, int y, Viewport viewport) {
+    public Block(int type, int x, int y, Viewport viewport, IBitmap bitMap) {
         super(viewport);
         setType(type);
+        setBitmap(bitMap);
         setX(x);
         setY(y);
+        setZoomX(BLOCK_SIZE * 1.0D / 16.0D);
+        setZoomY(BLOCK_SIZE * 1.0D / 16.0D);
     }
 
     @Override
@@ -73,4 +79,5 @@ public class Block extends SceneObjectObjectBase {
                 break;
         }
     }
+
 }

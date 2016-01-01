@@ -29,8 +29,8 @@ public class Player extends SceneObjectObjectBase {
     public Player(Viewport viewport, UUID id) {
         super(viewport);
         this.id = id;
-        mX = getX();
-        mY = getY();
+        mX = super.getX();
+        mY = super.getY();
 
         mVelocityX = 0;
         mVelocityY = 0;
@@ -44,11 +44,12 @@ public class Player extends SceneObjectObjectBase {
 
     @Override
     public void update() {
-        mX += mVelocityX;
-        mY += mVelocityY;
 
-        setX(mX);
-        setY(mY);
+        mX += Math.round(mVelocityX);
+        mY += Math.round(mVelocityY);
+
+        super.setX(mX);
+        super.setY(mY);
     }
 
     public UUID getId() {
@@ -64,6 +65,35 @@ public class Player extends SceneObjectObjectBase {
         mAccelerationX = data.ax;
         mAccelerationY = data.ay;
     }
+
+    @Override
+    public void setX(int x)  {
+        mX = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        mY = y;
+    }
+
+    @Override
+    public int getX() {
+        return mX;
+    }
+
+    @Override
+    public int getY() {
+        return mY;
+    }
+
+    public int getNextX() {
+        return mX + (int)Math.round(mVelocityX);
+    }
+
+    public int getNextY() {
+        return mY + (int)Math.round(mVelocityY);
+    }
+
 
     public double getVelocityX (){
         return mVelocityX;
@@ -138,14 +168,30 @@ public class Player extends SceneObjectObjectBase {
         return false;
     }
 
+    public void normalizeVelocity(double lim) {
+        if (mVelocityX < 0)
+            mVelocityX = Math.max(mVelocityX, -lim);
+        else
+            mVelocityX = Math.min(mVelocityX, lim);
+        mVelocityY = Math.min(mVelocityY, lim);
+
+    }
+
 
     @Override
     public Rectangle getOccupiedSpace() {
-        final int real_x = (int)Math.round(getViewport().x + mX + mVelocityX);
-        final int real_y = (int)Math.round(getViewport().y + mY + mVelocityY);
+        final int real_x = Math.round(getViewport().x + mX);
+        final int real_y = Math.round(getViewport().y + mY);
 
         return new Rectangle(real_x - PLAYER_SIZE / 2,
                              real_y + PLAYER_SIZE,
                              PLAYER_SIZE, PLAYER_SIZE);
+    }
+
+    @Override
+    public String toString() {
+        return "player x:" + mX +" y:" + mY +
+                " vx: " + mVelocityX + " vy:" + mVelocityY +
+                " ax: " + mAccelerationX + " ay:" + mAccelerationY;
     }
 }

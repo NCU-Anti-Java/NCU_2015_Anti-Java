@@ -15,6 +15,8 @@ public enum Key {
 
     CROUCH,
 
+    ANY,
+
 
 
 

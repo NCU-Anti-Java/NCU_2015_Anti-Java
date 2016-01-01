@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author Davy
@@ -158,5 +159,12 @@ public class Graphics implements IGraphics, GameConstant {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    @Override
+    public Viewport createViewport() {
+        final Viewport viewport = new Viewport();
+        mViewports.add(viewport);
+        return viewport;
     }
 }

@@ -5,5 +5,5 @@ package io.github.antijava.marjio.scene.sceneObject;
  */
 public interface PhysicsConstant {
     double gravity = 1.0;
-    double friction = 0.03;
+    double friction = 0.25;
 }

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Marjio.iml" filepath="$PROJECT_DIR$/Marjio.iml" />
       <module fileurl="file://$PROJECT_DIR$/Application/application.iml" filepath="$PROJECT_DIR$/Application/application.iml" />
       <module fileurl="file://$PROJECT_DIR$/Common/common.iml" filepath="$PROJECT_DIR$/Common/common.iml" />
-      <module fileurl="file://$PROJECT_DIR$/marjio.iml" filepath="$PROJECT_DIR$/marjio.iml" />
     </modules>
   </component>
 </project>

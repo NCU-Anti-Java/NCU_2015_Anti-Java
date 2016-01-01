@@ -3,6 +3,8 @@ allprojects {
     apply plugin: 'java'
     group 'io.github.antijava'
     version '1.0-SNAPSHOT'
+
+    compileJava.options.encoding = 'UTF-8'
 }
 
 subprojects {
