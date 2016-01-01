@@ -62,7 +62,6 @@ public class Network implements IClient, IServer, Constant {
         mServer.start();
         mServer.bind(NET_TCP_PORT, NET_UDP_PORT);
         mServer.addListener(new ServerReceiver(mApplication, mConnectionMap, mClientList));
-
     }
 
     @Override
