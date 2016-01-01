@@ -13,6 +13,8 @@ import io.github.antijava.marjio.window.WindowBase;
 import io.github.antijava.marjio.window.WindowCommand;
 import io.github.antijava.marjio.window.WindowIPAddressInput;
 
+import java.net.InetAddress;
+
 /**
  * Created by Zheng-Yuan on 12/24/2015.
  */
@@ -87,6 +89,7 @@ public class JoinScene extends SceneBase implements Constant {
                     final IInput input = getApplication().getInput();
                     final IClient client = getApplication().getClient();
                     final Request joinRequest = new Request(Request.Types.ClientWannaJoinRoom);
+                    client.start(InetAddress.getByName(mWindowIPAddressInput.getIPString()));
                     client.send(joinRequest);
                     // TODO: Let user know we are waiting response
 
@@ -128,7 +131,7 @@ public class JoinScene extends SceneBase implements Constant {
         final IApplication application = getApplication();
 
         mWindowIPAddressInput = new WindowIPAddressInput(application);
-        mWindowCommand = new WindowCommand(application, 140, new String[] {"½T©w", "ªð¦^"});
+        mWindowCommand = new WindowCommand(application, 140, new String[] {"ï¿½Tï¿½w", "ï¿½ï¿½^"});
         mWindowBack = new WindowBase(application,
                 mWindowIPAddressInput.getWidth() + mWindowCommand.getWidth(),
                 mWindowCommand.getHeight()) {
@@ -138,7 +141,7 @@ public class JoinScene extends SceneBase implements Constant {
 
                 final IBitmap readmeContent = getContent();
                 readmeContent.clear();
-                readmeContent.drawText("¿é¤J¦øªA¾¹ IP: ", 0, 0, -1, 24, Color.WHITE);
+                readmeContent.drawText("ï¿½ï¿½Jï¿½ï¿½ï¿½Aï¿½ï¿½ IP: ", 0, 0, -1, 24, Color.WHITE);
             }
         };
 

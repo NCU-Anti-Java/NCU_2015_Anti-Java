@@ -14,6 +14,8 @@ import io.github.antijava.marjio.window.WindowCommand;
 import io.github.antijava.marjio.window.WindowIPAddressInput;
 import io.github.antijava.marjio.window.WindowPlayerList;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,8 @@ public class RoomScene extends SceneBase implements Constant {
     private WindowCommand mWindowCommand;
     private WindowPlayerList mWindowPlayerList;
     private List<String> mPlayerList;
+    private IServer mServer;
+    private IClient mClient;
 
     public RoomScene(IApplication application, boolean isServer) {
         super(application);
@@ -41,6 +45,17 @@ public class RoomScene extends SceneBase implements Constant {
         mPlayerList = new ArrayList<>();
 
         initWindows();
+
+        if(mIsServer) {
+            mServer = getApplication().getServer();
+            try {
+                mServer.start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void initWindows() {
