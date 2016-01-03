@@ -1,15 +1,15 @@
 package io.github.antijava.marjio.network;
 
-import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.kryonet.*;
+
 import io.github.antijava.marjio.common.IApplication;
 import io.github.antijava.marjio.common.IInput;
 import io.github.antijava.marjio.common.IServer;
 import io.github.antijava.marjio.common.input.Request;
 import io.github.antijava.marjio.common.input.SceneObjectStatus;
 import io.github.antijava.marjio.common.input.Status;
+import io.github.antijava.marjio.common.network.RequestData;
+import io.github.antijava.marjio.common.network.StatusData;
 import io.github.antijava.marjio.constant.Constant;
 import org.junit.After;
 import org.junit.Assert;
@@ -58,14 +58,13 @@ public class NetworkTest implements Constant{
         when(application.getLogger()).thenReturn(Logger.getLogger(LOGGER_NAME));
 
         IServer server = new Network(application);
-        Client client = new Client(16384, 8192);
-        client.getKryo().register(byte[].class);
+        Client client = new Client(16384, 8192, new JsonSerialization());
 
         server.start();
         client.start();
         client.connect(5000, "127.0.0.1", NET_TCP_PORT, NET_UDP_PORT);
 
-        client.sendTCP(Packer.PackabletoByteArray(request));
+        client.sendTCP(Packer.RequestToData(request));
 
         Thread.sleep(1000);
 
@@ -79,10 +78,8 @@ public class NetworkTest implements Constant{
 
     @Test
     public void testKryoSendRequest() throws Exception {
-        Client client = new Client(16384, 8192);
-        client.getKryo().register(byte[].class);
-        Server server = new Server(16384, 8192);
-        server.getKryo().register(byte[].class);
+        Client client = new Client(16384, 8192, new JsonSerialization());
+        Server server = new Server(16384, 8192, new JsonSerialization());
 
         server.start();
         server.bind(NET_TCP_PORT, NET_UDP_PORT);
@@ -90,12 +87,12 @@ public class NetworkTest implements Constant{
 
             @Override
             public void received (Connection connection, Object object) {
-                if (object instanceof byte[]) {
-                    Request request = (Request)Packer.ByteArraytoPackable((byte[])object);
+                if (object instanceof RequestData) {
+                    Request request = Packer.DataToRequest((RequestData)object);
 
                     if (request.getType() == Request.Types.ClientWannaJoinRoom) {
                         Request response = new Request(clientId, Request.Types.ClientCanJoinRoom);
-                        connection.sendTCP(Packer.PackabletoByteArray(response));
+                        connection.sendTCP(Packer.RequestToData(response));
                         return;
                     }
                 }
@@ -110,8 +107,8 @@ public class NetworkTest implements Constant{
 
             @Override
             public void received (Connection connection, Object object) {
-                if (object instanceof byte[]) {
-                    Request response = (Request) Packer.ByteArraytoPackable((byte[])object);
+                if (object instanceof RequestData) {
+                    Request response = Packer.DataToRequest((RequestData)object);
 
                     if (response.getType() == Request.Types.ClientCanJoinRoom) {
                         Assert.assertTrue(true);
@@ -123,7 +120,7 @@ public class NetworkTest implements Constant{
         });
 
         Request request = new Request(clientId, Request.Types.ClientWannaJoinRoom);
-        client.sendTCP(Packer.PackabletoByteArray(request));
+        client.sendTCP(Packer.RequestToData(request));
 
         Thread.sleep(2000);
 
@@ -135,19 +132,16 @@ public class NetworkTest implements Constant{
 
     @Test
     public void testKryoSendStatus() throws Exception {
-        Client client = new Client(16384, 8192);
-        client.getKryo().register(byte[].class);
-        Server server = new Server(16384, 8192);
-        server.getKryo().register(byte[].class);
-
+        Client client = new Client(16384, 8192, new JsonSerialization());
+        Server server = new Server(16384, 8192, new JsonSerialization());
 
         server.start();
         server.bind(NET_TCP_PORT, NET_UDP_PORT);
         server.addListener(new Listener() {
             @Override
             public void received (Connection connection, Object object) {
-                if (object instanceof byte[]) {
-                    Status receiveStatus = (Status) Packer.ByteArraytoPackable((byte[])object);
+                if (object instanceof StatusData) {
+                    Status receiveStatus = Packer.DataToStatus((StatusData) object);
 
                     // TODO: More accurately compare with status.equals(anotherStatus);
                     if (receiveStatus.getClientID().toString().equals(clientId.toString())) {
@@ -163,7 +157,7 @@ public class NetworkTest implements Constant{
         client.start();
         client.connect(5000, "127.0.0.1", NET_TCP_PORT, NET_UDP_PORT);
 
-        client.sendTCP(Packer.PackabletoByteArray(mStatus));
+        client.sendTCP(Packer.StatustToData(mStatus));
 
         Thread.sleep(2000);
 

@@ -2,23 +2,15 @@ package io.github.antijava.marjio.common.input;
 
 import io.github.antijava.marjio.common.network.Packable;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.UUID;
 
 /**
  * Created by firejox on 2015/12/25.
  */
-public class Status implements Packable, Externalizable {
-    private Types mType;
-    private Object mObject;
-    private UUID mId;
-
-    public Status() {
-
-    }
+public class Status implements Packable{
+    Types mType;
+    Object mObject;
+    UUID mId;
 
     public Status(SceneObjectStatus obj, Types type) {
         mType = type;
@@ -34,20 +26,6 @@ public class Status implements Packable, Externalizable {
     @Override
     public void setClientID(UUID id) {
         mId = id;
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(mType);
-        out.writeObject(mObject);
-        out.writeObject(mId);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        mType = (Types) in.readObject();
-        mObject = in.readObject();
-        mId = (UUID) in.readObject();
     }
 
     public enum Types {
