@@ -3,10 +3,13 @@ package io.github.antijava.marjio.input;
 import io.github.antijava.marjio.common.IInput;
 import io.github.antijava.marjio.common.input.*;
 import io.github.antijava.marjio.common.input.IKeyInfo.KeyState;
-import io.github.antijava.marjio.common.network.Packable;
 
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -29,8 +32,11 @@ public final class Input implements IInput {
     private Set<Key> mPreviousKeys;
     private Map<Key, Integer> mKeyRepeatCount;
 
-    private Map<Class<? extends Packable>, List<Packable>> mNetWorkData;
-    private Map<Class<? extends Packable>, List<Packable>> mNetWorkDataCached;
+    private Vector<Status> mStatuses;
+    private Vector<Status> mStatusesCached;
+
+    private Vector<Request> mRequests;
+    private Vector<Request> mRequestsCached;
 
     private ReadWriteLock mLock;
 
@@ -43,27 +49,12 @@ public final class Input implements IInput {
 
         mKeyRepeatCount = new EnumMap<>(Key.class);
 
-        mNetWorkData = new HashMap<>();
-        mNetWorkDataCached = new HashMap<>();
-        
-        initNetWorkData();
+        mStatuses = new Vector<>();
+        mStatusesCached = new Vector<>();
+        mRequests = new Vector<>();
+        mRequestsCached = new Vector<>();
 
         mLock = new ReentrantReadWriteLock();
-    }
-
-    private void initNetWorkData() {
-        try {
-            Method m = getClass().getMethod("getNetWorkData");
-            NetWorkData data = m.getAnnotation(NetWorkData.class);
-
-            for (Class c : data.value()) {
-                mNetWorkData.put(c, new Vector<>());
-                mNetWorkDataCached.put(c, new Vector<>());
-            }
-
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -79,14 +70,18 @@ public final class Input implements IInput {
         mPreviousKeys = mCurrentKeys;
         mCurrentKeys = mNextKeys;
         mNextKeys = tmpKeys;
-        
-        for (final Class c : mNetWorkData.keySet()) {
-            final List<Packable> tempData = mNetWorkData.get(c);
-            
-            mNetWorkData.put(c, mNetWorkDataCached.get(c));
-            mNetWorkDataCached.put(c, tempData);
-            mNetWorkData.get(c).clear();
-        }
+
+        // Switching using Vector for optimization
+        final Vector<Request> tmpRequest = mRequestsCached;
+        mRequestsCached = mRequests;
+        mRequests = tmpRequest;
+        mRequests.clear();
+
+        // Switching using Vector for optimization
+        final Vector<Status> tmpStatuses = mStatusesCached;
+        mStatusesCached = mStatuses;
+        mStatuses = tmpStatuses;
+        mStatuses.clear();
 
         // Unlock
         mLock.writeLock().unlock();
@@ -157,21 +152,14 @@ public final class Input implements IInput {
                 (0 == ((count - key_start_ticks) % key_repeat_ticks));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Status> getStatuses() {
-        return (List<Status>)getNetWorkData(Status.class);
+        return mStatusesCached;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Request> getRequest() {
-        return (List<Request>)getNetWorkData(Request.class);
-    }
-
-    @Override
-    public List<? extends Packable> getNetWorkData(Class c) {
-        return mNetWorkDataCached.getOrDefault(c, Collections.emptyList());
+        return mRequestsCached;
     }
 
     @Override
@@ -194,12 +182,10 @@ public final class Input implements IInput {
             case NetWorkClient:
             case NetworkServer: {
                 Object data = evt.getData();
-                if (data != null) {
-                    mNetWorkData.forEach((klass, list) -> {
-                        if (klass.isAssignableFrom(data.getClass())) {
-                            list.add((Packable)(data));
-                        }
-                    });
+                if (data instanceof Status) {
+                    mStatuses.add((Status) data);
+                } else if (data instanceof Request) {
+                    mRequests.add((Request) data);
                 }
                 break;
             }

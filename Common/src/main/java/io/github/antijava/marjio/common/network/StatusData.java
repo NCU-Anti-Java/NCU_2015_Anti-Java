@@ -1,18 +1,14 @@
-package io.github.antijava.marjio.common.input;
+package io.github.antijava.marjio.common.network;
 
 import java.util.UUID;
 
 /**
- * Created by Date on 2015/12/29.
+ * Created by fntsr on 2016/1/2.
  */
-public class SceneObjectStatus {
-    public enum Types {
-        Player,
-        Block,
-        Item
-    }
-    public UUID uuid;
-    public Types type;
+public class StatusData implements PackData{
+    public String uuid;
+    public String sourceType;
+    public String objectType;
     public int id;
     public int action_id;
     public int time_counter;
